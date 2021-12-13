@@ -1,0 +1,59 @@
+pipeline {
+    agent none
+    options {
+        disableConcurrentBuilds()
+        disableResume()
+        buildDiscarder(logRotator(numToKeepStr: '15', artifactNumToKeepStr: '15'))
+    }
+    stages {
+        stage('Matrix') {
+            matrix {
+                agent {
+                    label "${OS}"
+                }
+                axes {
+                    axis {
+                        name 'OS'
+                        values 'gi7-x86_64', 'gi8-x86_64'
+                    }
+                }
+                stages {
+                    stage ('Nudev build') {
+                        steps {
+                            container('nudev') {
+                                sh '''nudev4 make unittests'''
+                                sh '''nudev4 make build publish'''
+                            }
+                        }
+                        post {
+                            always {
+                                container('nudev') {
+                                    junit testResults: '**/junit_*.xml'
+                                    publishHTML target: [
+                                        keepAll: true,
+                                        alwaysLinkToLastBuild: true,
+                                        reportDir: 'coverage_when-cli',
+                                        reportFiles: 'index.html',
+                                        reportName: 'Coverage Report'
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    post {
+        failure {
+            mail to: 'christian.assing@infineon.com',
+                subject: "Build failed in Jenkins: ${currentBuild.fullProjectName}",
+                body: "Details can be found here: ${currentBuild.absoluteUrl}"
+        }
+        fixed {
+            mail to: 'christian.assing@infineon.com',
+                subject: "Jenkins build is back to normal: ${currentBuild.fullProjectName}",
+                body: "Details can be found here: ${currentBuild.absoluteUrl}"
+        }
+    }
+}
