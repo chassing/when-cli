@@ -4,7 +4,7 @@ from nudev.api.v4 import PackageBattery, ProjectConfigBase, PublishOptMixin, Pyt
 class SourceConfig(PythonBinaryBattery, PublishOptMixin, PackageBattery, SourceConfigBase):
     """Source config for when-cli."""
 
-    name = "when"
+    name = "when-cli"
     version = "1.0"
     script_names = ["when/when/__main__.py"]
     python = python_shebang = python_interpreter = "/usr/bin/python3.8"
