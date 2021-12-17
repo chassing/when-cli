@@ -12,6 +12,7 @@ from rich.text import Text
 
 console = Console()
 locale.setlocale(locale.LC_ALL, "")
+locale.setlocale(locale.LC_TIME, "")
 
 SITES = [
     ("auc", "Austin"),
