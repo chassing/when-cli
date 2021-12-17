@@ -1,5 +1,6 @@
 import locale
 from datetime import datetime as dt
+from typing import List
 from urllib.parse import urljoin
 
 import httpx
@@ -46,7 +47,7 @@ def complete_info_columns(ctx: typer.Context, incomplete: str):
 
 def main(
     time_string: str,
-    sites: list[str] = typer.Option(
+    sites: List[str] = typer.Option(
         None,
         "--sites",
         "-s",
@@ -64,7 +65,7 @@ def main(
     time_color: str = "spring_green3",
     tz_format: str = "%Z",
     tz_color: str = "grey27",
-    info_columns: list[str] = typer.Option(
+    info_columns: List[str] = typer.Option(
         [k for k, v in INFO_COLS],
         "--info-columns",
         "-i",
