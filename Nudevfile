@@ -14,29 +14,14 @@ pipeline {
                 axes {
                     axis {
                         name 'OS'
-                        values 'gi7-x86_64', 'gi8-x86_64'
+                        values 'gi7-x86_64', 'ubuntu-2004'
                     }
                 }
                 stages {
                     stage ('Nudev build') {
                         steps {
                             container('nudev') {
-                                sh '''nudev4 make unittests'''
                                 sh '''nudev4 make build publish'''
-                            }
-                        }
-                        post {
-                            always {
-                                container('nudev') {
-                                    junit testResults: '**/junit_*.xml'
-                                    publishHTML target: [
-                                        keepAll: true,
-                                        alwaysLinkToLastBuild: true,
-                                        reportDir: 'coverage_when-cli',
-                                        reportFiles: 'index.html',
-                                        reportName: 'Coverage Report'
-                                    ]
-                                }
                             }
                         }
                     }

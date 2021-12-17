@@ -1,8 +1,7 @@
 
-from setuptools import setup
-
 import time
 
+from setuptools import setup
 
 setup(
     name='when-cli',
@@ -12,14 +11,14 @@ setup(
     author_email='christian.assing@infineon.com',
     url='https://wiki.intra.infineon.com',
     packages=[
-        'when-cli',
+        'when',
     ],
-    package_dir={'when-cli': 'when-cli'},
+    package_dir={'when': 'when'},
     include_package_data=True,
     install_requires=[],
     license="Public Domain (WTFPL)",
     platforms='any',
-    keywords='when-cli',
+    keywords='when',
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Developers',
