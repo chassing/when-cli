@@ -18,6 +18,7 @@ SITES = [
     ("auc", "Austin"),
     ("brs", "Bristol"),
     ("blr", "Bengalore"),
+    ("cha", "Chandler"),
     ("els", "El Segundo"),
     ("kac", "Kozoji"),
     ("sin", "Singapore"),
@@ -122,7 +123,9 @@ def main(
     zones = sorted(r.json(), key=lambda x: x["offset"])
     table = Table(title="Zones", style=table_color, box=rich.box.ROUNDED, padding=table_padding)
     for zone in zones:
-        table.add_column(Text(f"{zone['name']}\n{zone['tz']}", justify="center", style=header_color))
+        table.add_column(
+            Text(f"{zone['description']} ({zone['name']})\n{zone['tz']}", justify="center", style=header_color)
+        )
 
     p_times = None
     for times in zip(*[zone["times"] for zone in zones]):
