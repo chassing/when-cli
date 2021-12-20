@@ -119,7 +119,7 @@ def main(
 
     See https://rich.readthedocs.io/en/latest/appendix/colors.html for all available color codes.
     """
-    r = httpx.get(url, params={"time_string": time_string, "sites": sites})
+    r = httpx.get(url, params={"time_string": time_string, "sites": sites}, timeout=15)
     zones = sorted(r.json(), key=lambda x: x["offset"])
     table = Table(title="Zones", style=table_color, box=rich.box.ROUNDED, padding=table_padding)
     for zone in zones:
