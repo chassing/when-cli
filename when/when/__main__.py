@@ -1,7 +1,6 @@
 import locale
 from datetime import datetime as dt
 from typing import List
-from urllib.parse import urljoin
 
 import httpx
 import rich.box
@@ -55,22 +54,25 @@ def main(
         autocompletion=complete_sites,
         envvar="WHEN_SITES",
     ),
-    url: str = typer.Option("https://when.icp.infineon.com", "--url", "-u", help="WHEN API Url."),
-    table_color: str = "deep_sky_blue2",
-    table_padding: int = 0,
-    header_color: str = "green",
-    date_format: str = "%x",
-    date_color: str = "deep_pink4",
-    time_format: str = "%H:%M",
-    time_color: str = "spring_green3",
-    tz_format: str = "%Z",
-    tz_color: str = "grey27",
+    url: str = typer.Option(
+        "http://when-when.eu-at-1.icp.infineon.com", "--url", "-u", help="WHEN API Url.", envvar="WHEN_URL"
+    ),
+    table_color: str = typer.Option("deep_sky_blue2", envvar="WHEN_TABLE_COLOR"),
+    table_padding: int = typer.Option(0, envvar="WHEN_TABLE_PADDING"),
+    header_color: str = typer.Option("green", envvar="WHEN_HEADER_COLOR"),
+    date_format: str = typer.Option("%x", envvar="WHEN_DATE_FORMAT"),
+    date_color: str = typer.Option("deep_pink4", envvar="WHEN_DATE_COLOR"),
+    time_format: str = typer.Option("%H:%M", envvar="WHEN_TIME_FORMAT"),
+    time_color: str = typer.Option("spring_green3", envvar="WHEN_TIME_COLOR"),
+    tz_format: str = typer.Option("%Z", envvar="WHEN_TZ_FORMAT"),
+    tz_color: str = typer.Option("grey27", envvar="WHEN_TZ_COLOR"),
     info_columns: List[str] = typer.Option(
         [k for k, v in INFO_COLS],
         "--info-columns",
         "-i",
         help="Display these columns in this order.",
         autocompletion=complete_info_columns,
+        envvar="WHEN_INFO_COLUMNS",
     ),
 ):
     """Convert your given time string into different timezones.
@@ -116,7 +118,7 @@ def main(
 
     See https://rich.readthedocs.io/en/latest/appendix/colors.html for all available color codes.
     """
-    r = httpx.get(urljoin(url, "/tz"), params={"time_string": time_string, "sites": sites})
+    r = httpx.get(url, params={"time_string": time_string, "sites": sites})
     zones = sorted(r.json(), key=lambda x: x["offset"])
     table = Table(title="Zones", style=table_color, box=rich.box.ROUNDED, padding=table_padding)
     for zone in zones:
