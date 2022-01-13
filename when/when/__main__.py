@@ -25,6 +25,7 @@ SITES = [
     ("tdc", "Andover"),
     ("vih", "Villach"),
     ("klu", "Klagenfurt"),
+    ("utc", "UTC"),
 ]
 INFO_COLS = [
     ("date", "Date column"),
