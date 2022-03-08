@@ -31,12 +31,12 @@ pipeline {
     }
     post {
         failure {
-            mail to: 'christian.assing@infineon.com',
+            mail to: 'Christoph.Zirknitzer@infineon.com',
                 subject: "Build failed in Jenkins: ${currentBuild.fullProjectName}",
                 body: "Details can be found here: ${currentBuild.absoluteUrl}"
         }
         fixed {
-            mail to: 'christian.assing@infineon.com',
+            mail to: 'Christoph.Zirknitzer@infineon.com',
                 subject: "Jenkins build is back to normal: ${currentBuild.fullProjectName}",
                 body: "Details can be found here: ${currentBuild.absoluteUrl}"
         }
