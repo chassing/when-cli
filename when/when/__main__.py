@@ -4,11 +4,24 @@ from typing import List
 
 import httpx
 import rich.box
-import typer
 from rich.console import Console
 from rich.style import Style
 from rich.table import Table
 from rich.text import Text
+
+from when.config import settings
+from when.when import when
+from when.rich_typer import click, typer, blend_text
+
+click.rich_click.USE_RICH_MARKUP = True
+click.rich_click.SHOW_ARGUMENTS = True
+click.rich_click.GROUP_ARGUMENTS_OPTIONS = False
+click.rich_click.SHOW_METAVARS_COLUMN = True
+click.rich_click.SHOW_ENVVARS_COLUMN = True
+click.rich_click.FOOTER_TEXT = blend_text(
+    "Made with ♥ by https://github.com/chassing/when-cli", (32, 32, 255), (255, 32, 255)
+)
+click.rich_click.STYLE_FOOTER_TEXT = "#D920FF"
 
 console = Console()
 locale.setlocale(locale.LC_ALL, "")
@@ -77,48 +90,30 @@ def main(
         envvar="WHEN_INFO_COLUMNS",
     ),
 ):
-    """Convert your given time string into different timezones.
+    """[b yellow]when-cli[/] is a small timezone conversation tool. It takes as input a natural given time string
+    (can also be a time range) and converts it into different timezone at specific locations.
 
-    TIME_STRING must be in the following format:
+    \b
+    ---
+    Examples:
 
-    [DATE] [TIME] [to [DATE] [TIME]] [in SITE]
+    \b
+    $ when-cli "30. September 17:00 to Oct 1st 2:3pm in LAX"
+    $ when-cli "17:00 in Europe/Berlin" -l lax -l klu
 
-    ---- DATE ----
+    \b
+    [b white]Syntax[/]
+    The required argument ([b cyan]TIME_STRING[/]) is basically a human readable date time string in this syntax:
+    [[b green]DATE[/]] [b red]TIME[/] [TO [b green]TO_DATE[/] [red]TO_TIME[/]] [IN [b blue]TIMEZONE_OR_LOCATION[/]]
 
+    \b
+    [b white]Usage[/]
+    Get detailed information and more examples:
+    $ when-cli --usage
 
-    * YYYY-MM-DD, YYYY.MM.DD (e.g. 2021-09-30)
-
-    * Day Month [Year] (e.g. 30. September) - German locale
-
-    * [Year] Month Day (e.g. September 30th) - English locale
-
-    * Month can be an abbreviation too (e.g Sep vs September)
-
-    * Day can be english or german local (e.g. 1st vs 1.)
-
-    ---- TIME ----
-
-    * HH:MM (e.g. 16:30) - 24 hours format
-
-    * HH:MM am/pm (e.g. 2:30am) - 12 hours format
-
-    ---- RANGE ----
-
-    * use "to" keyword followed by another date/time argument to span a time range
-
-    ---- TIMEZONE ----
-
-    * use "in" keyword followed by IFX sites abbreviation to specify a timezone
-
-    * e.g. "in ELS"
-
-    ---- EXAMPLES ----
-
-    * 30. September 17:00 to Oct 1st 2:3pm in ELS
-
-    ---- COLORS ----
-
-    See https://rich.readthedocs.io/en/latest/appendix/colors.html for all available color codes.
+    \b
+    [#2020FF]C[/][#4520FF]o[/][#6A20FF]l[/][#8F20FF]o[/][#B420FF]r[/][#D920FF]s[/]
+    See [link]https://rich.readthedocs.io/en/latest/appendix/colors.html[/] for all available color codes.
     """
     r = httpx.get(url, params={"time_string": time_string, "sites": sites}, timeout=15)
     zones = sorted(r.json(), key=lambda x: x["offset"])
