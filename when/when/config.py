@@ -6,10 +6,11 @@ except ImportError:
     from backports import zoneinfo
 
 from pydantic import BaseModel, BaseSettings, validator
+from tzlocal import get_localzone
 
 
 class Location(BaseModel):
-    name: str
+    key: str
     description: str
     tz: str
 
@@ -23,23 +24,17 @@ class Location(BaseModel):
 
 class Settings(BaseSettings):
     debug: bool = False
-    default_tz: str = "UTC"
+    default_tz: str = str(get_localzone())
     locations: List[Location] = [
-        Location(name="klu", description="Klagenfurt, Austria", tz="Europe/Vienna"),
-        Location(name="els", description="El Segundo, USA", tz="America/Los_Angeles"),
-        Location(name="sin", description="Singapore", tz="Asia/Singapore"),
-        Location(name="utc", description="Greenwich, UK", tz="UTC"),
+        Location(key="klu", description="Klagenfurt, Austria", tz="Europe/Vienna"),
+        Location(key="els", description="El Segundo, USA", tz="America/Los_Angeles"),
+        Location(key="sin", description="Singapore", tz="Asia/Singapore"),
+        Location(key="utc", description="Greenwich, UK", tz="UTC"),
     ]
 
     def get(self):
         """."""
         return self
-
-    def location_by_name(self, name):
-        for location in self.locations:
-            if location.name.lower() == name.lower():
-                return location
-        raise KeyError(f"{name} not found")
 
     class Config:
         env_prefix = "when_config_"

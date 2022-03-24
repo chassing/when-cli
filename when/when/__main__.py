@@ -9,14 +9,14 @@ except ImportError:
     from backports import zoneinfo
 
 import rich.box
-from rich.console import Console
+from rich import print
 from rich.style import Style
 from rich.table import Table
 from rich.text import Text
 
 from when.config import settings
+from when.rich_typer import blend_text, click, typer
 from when.when import when
-from when.rich_typer import click, typer, blend_text
 
 click.rich_click.USE_RICH_MARKUP = True
 click.rich_click.SHOW_ARGUMENTS = True
@@ -28,7 +28,6 @@ click.rich_click.FOOTER_TEXT = blend_text(
 )
 click.rich_click.STYLE_FOOTER_TEXT = "#D920FF"
 
-console = Console()
 locale.setlocale(locale.LC_ALL, "")
 locale.setlocale(locale.LC_TIME, "")
 
@@ -40,12 +39,6 @@ INFO_COLS = [
 ]
 
 VERSION = "2.0"
-
-
-def complete_locations(ctx: typer.Context, incomplete: str):
-    for name, help_text in [(l.name, f"{l.description} ({l.tz})") for l in settings.locations]:
-        if name.startswith(incomplete) and name not in ctx.params.get("locations", []):
-            yield (name, help_text)
 
 
 def complete_info_columns(ctx: typer.Context, incomplete: str):
@@ -63,11 +56,10 @@ def show_usage(value: bool):
 def main(
     time_string: str,
     locations: List[str] = typer.Option(
-        ["klu", "els"],
+        [loc.key for loc in settings.locations],
         "--locations",
         "-l",
         help="Display these locations. Can be given multiple times.",
-        autocompletion=complete_locations,
         metavar="LOCATION_KEY",
         envvar="WHEN_LOCATIONS",
     ),
@@ -119,17 +111,23 @@ def main(
     See [link]https://rich.readthedocs.io/en/latest/appendix/colors.html[/] for all available color codes.
     """
     try:
-        r = when(time_string=time_string, locations=locations)
-    except zoneinfo.ZoneInfoNotFoundError:
-        console.print(Text("[b red]Unknown timezone[/]"))
+        r = when(time_string=time_string, location_keys=locations)
+    except zoneinfo.ZoneInfoNotFoundError as e:
+        print(f"[b red]Unknown timezone[/]: {e}")
         sys.exit(1)
 
     zones = sorted(r, key=lambda x: x["offset"])
     table = Table(title="Time table", style=table_color, box=rich.box.ROUNDED, padding=table_padding)
     for zone in zones:
-        table.add_column(
-            Text(f"{zone['description']} ({zone['name']})\n{zone['tz']}", justify="center", style=header_color)
-        )
+        text = ""
+        if zone["description"]:
+            text += zone["description"]
+        if zone["name"]:
+            text += zone["name"]
+        if zone["description"] or zone["name"]:
+            text += "\n"
+        text += zone["tz"]
+        table.add_column(Text(text, justify="center", style=header_color))
 
     p_times = None
     for times in zip(*[zone["times"] for zone in zones]):
@@ -159,7 +157,7 @@ def main(
         p_times = times
         table.add_row(*row)
 
-    console.print(table)
+    print(table)
 
 
 if __name__ == "__main__":

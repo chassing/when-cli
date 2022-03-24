@@ -10,3 +10,4 @@ tzdata
 backports.zoneinfo
 pydantic==1.9.*
 airportsdata
+tzlocal==4.*
