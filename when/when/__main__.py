@@ -1,8 +1,13 @@
 import locale
+import sys
 from datetime import datetime as dt
 from typing import List
 
-import httpx
+try:
+    import zoneinfo
+except ImportError:
+    from backports import zoneinfo
+
 import rich.box
 from rich.console import Console
 from rich.style import Style
@@ -27,29 +32,19 @@ console = Console()
 locale.setlocale(locale.LC_ALL, "")
 locale.setlocale(locale.LC_TIME, "")
 
-SITES = [
-    ("auc", "Austin"),
-    ("brs", "Bristol"),
-    ("blr", "Bengalore"),
-    ("cha", "Chandler"),
-    ("els", "El Segundo"),
-    ("kac", "Kozoji"),
-    ("sin", "Singapore"),
-    ("tdc", "Andover"),
-    ("vih", "Villach"),
-    ("klu", "Klagenfurt"),
-    ("utc", "UTC"),
-]
+
 INFO_COLS = [
     ("date", "Date column"),
     ("time", "Time column"),
     ("tz", "Timezone column"),
 ]
 
+VERSION = "2.0"
 
-def complete_sites(ctx: typer.Context, incomplete: str):
-    for name, help_text in SITES:
-        if name.startswith(incomplete) and name not in ctx.params.get("sites", []):
+
+def complete_locations(ctx: typer.Context, incomplete: str):
+    for name, help_text in [(l.name, f"{l.description} ({l.tz})") for l in settings.locations]:
+        if name.startswith(incomplete) and name not in ctx.params.get("locations", []):
             yield (name, help_text)
 
 
@@ -59,28 +54,32 @@ def complete_info_columns(ctx: typer.Context, incomplete: str):
             yield (name, help_text)
 
 
+def show_usage(value: bool):
+    if not value:
+        return
+    sys.exit(0)
+
+
 def main(
     time_string: str,
-    sites: List[str] = typer.Option(
-        None,
-        "--sites",
-        "-s",
-        help="Use IFX site abbreviation. Can be given multiple times.",
-        autocompletion=complete_sites,
-        envvar="WHEN_SITES",
+    locations: List[str] = typer.Option(
+        ["klu", "els"],
+        "--locations",
+        "-l",
+        help="Display these locations. Can be given multiple times.",
+        autocompletion=complete_locations,
+        metavar="LOCATION_KEY",
+        envvar="WHEN_LOCATIONS",
     ),
-    url: str = typer.Option(
-        "http://when-when.eu-at-1.icp.infineon.com", "--url", "-u", help="WHEN API Url.", envvar="WHEN_URL"
-    ),
-    table_color: str = typer.Option("deep_sky_blue2", envvar="WHEN_TABLE_COLOR"),
-    table_padding: int = typer.Option(0, envvar="WHEN_TABLE_PADDING"),
-    header_color: str = typer.Option("green", envvar="WHEN_HEADER_COLOR"),
-    date_format: str = typer.Option("%x", envvar="WHEN_DATE_FORMAT"),
-    date_color: str = typer.Option("deep_pink4", envvar="WHEN_DATE_COLOR"),
-    time_format: str = typer.Option("%H:%M", envvar="WHEN_TIME_FORMAT"),
-    time_color: str = typer.Option("spring_green3", envvar="WHEN_TIME_COLOR"),
-    tz_format: str = typer.Option("%Z", envvar="WHEN_TZ_FORMAT"),
-    tz_color: str = typer.Option("grey27", envvar="WHEN_TZ_COLOR"),
+    table_color: str = typer.Option("deep_sky_blue2", envvar="WHEN_TABLE_COLOR", metavar="COLOR", show_default=True),
+    table_padding: int = typer.Option(0, envvar="WHEN_TABLE_PADDING", metavar="INTEGER"),
+    header_color: str = typer.Option("green", envvar="WHEN_HEADER_COLOR", metavar="COLOR"),
+    date_format: str = typer.Option("%x", envvar="WHEN_DATE_FORMAT", metavar="FORMAT_DIRECTIVE"),
+    date_color: str = typer.Option("deep_pink4", envvar="WHEN_DATE_COLOR", metavar="COLOR"),
+    time_format: str = typer.Option("%H:%M", envvar="WHEN_TIME_FORMAT", metavar="FORMAT_DIRECTIVE"),
+    time_color: str = typer.Option("spring_green3", envvar="WHEN_TIME_COLOR", metavar="COLOR"),
+    tz_format: str = typer.Option("%Z", envvar="WHEN_TZ_FORMAT", metavar="FORMAT_DIRECTIVE"),
+    tz_color: str = typer.Option("grey27", envvar="WHEN_TZ_COLOR", metavar="COLOR"),
     info_columns: List[str] = typer.Option(
         [k for k, v in INFO_COLS],
         "--info-columns",
@@ -88,6 +87,10 @@ def main(
         help="Display these columns in this order.",
         autocompletion=complete_info_columns,
         envvar="WHEN_INFO_COLUMNS",
+        metavar="COL_NAME",
+    ),
+    usage: bool = typer.Option(
+        None, is_flag=True, is_eager=True, expose_value=False, callback=show_usage, help="Show usage."
     ),
 ):
     """[b yellow]when-cli[/] is a small timezone conversation tool. It takes as input a natural given time string
@@ -115,9 +118,14 @@ def main(
     [#2020FF]C[/][#4520FF]o[/][#6A20FF]l[/][#8F20FF]o[/][#B420FF]r[/][#D920FF]s[/]
     See [link]https://rich.readthedocs.io/en/latest/appendix/colors.html[/] for all available color codes.
     """
-    r = httpx.get(url, params={"time_string": time_string, "sites": sites}, timeout=15)
-    zones = sorted(r.json(), key=lambda x: x["offset"])
-    table = Table(title="Zones", style=table_color, box=rich.box.ROUNDED, padding=table_padding)
+    try:
+        r = when(time_string=time_string, locations=locations)
+    except zoneinfo.ZoneInfoNotFoundError:
+        console.print(Text("[b red]Unknown timezone[/]"))
+        sys.exit(1)
+
+    zones = sorted(r, key=lambda x: x["offset"])
+    table = Table(title="Time table", style=table_color, box=rich.box.ROUNDED, padding=table_padding)
     for zone in zones:
         table.add_column(
             Text(f"{zone['description']} ({zone['name']})\n{zone['tz']}", justify="center", style=header_color)
