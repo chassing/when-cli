@@ -119,7 +119,7 @@ def main(
     zones = sorted(r, key=lambda x: x.offset)
     table = Table(title="Time table", style=table_color, box=rich.box.ROUNDED, padding=table_padding)
     for zone in zones:
-        text = zone.description + f" ({zone.name})" if zone.name else ""
+        text = zone.description + (f" ({zone.name})" if zone.name else "")
         if text:
             text += "\n"
         text += zone.tz

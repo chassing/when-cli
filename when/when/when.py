@@ -3,7 +3,9 @@ try:
 except ImportError:
     from backports import zoneinfo
 
+import json
 from datetime import datetime
+from pathlib import Path
 from zoneinfo import ZoneInfo
 
 import airportsdata
@@ -28,6 +30,14 @@ def location_by_key(key: str) -> Location:
         if key.upper() in airports:
             entry = airports[key.upper()]
             return Location(key=key, description=f"{entry['name']}, {entry['country']}", tz=entry["tz"])
+
+    # city name?
+    cities = json.loads((Path(__file__).parent / "data" / "cities.json").read_text())
+    try:
+        city = cities[key.lower()]
+        return Location(key="", description=f"{city['name']}, {city['country']}", tz=city["tz"])
+    except KeyError:
+        pass
 
     # ok than it must be a TZ name
     if key not in zoneinfo.available_timezones():
