@@ -55,14 +55,15 @@ def when(time_string, location_keys) -> Dict:
 class Tzone:
     def __init__(self, time_string) -> None:
         self.time_string = time_string
-        t1, t2, tz = self.split_time_string(time_string)
+
+        t1, t2, tz = split_time_string(self.time_string)
         if not tz:
             tz = settings.default_tz
         else:
             tz = location_by_key(tz).tz
 
-        self.t1 = self.parse_time_string(t1, tz)
-        self.t2 = self.parse_time_string(t2, tz) if t2 else self.t1
+        self.t1 = parse_time_string(t1, tz)
+        self.t2 = parse_time_string(t2, tz) if t2 else self.t1
 
     def convert(self, tz) -> List[datetime]:
         t1 = self.t1.to(tz)
@@ -72,25 +73,28 @@ class Tzone:
     def utc_offset(self, tz):
         return arrow.now(tz).utcoffset().total_seconds()
 
-    def split_time_string(self, time_string):
-        """Split time range string into start, end, tz."""
-        # TODO replace with regex
-        try:
-            t1 = t2 = tz = ""
-            # TZ
-            if "@" in time_string:
-                time_string, tz = time_string.split("@")
-            if " in " in time_string.lower():
-                time_string, tz = time_string.split(" in ")
 
-            # T1 - T2
-            t1 = time_string
-            if " to " in time_string.lower():
-                t1, t2 = time_string.split("to")
+def split_time_string(time_string) -> tuple[str, str, str]:
+    """Split time range string into start, end, tz."""
+    t1 = t2 = tz = ""
+    try:
+        # TZ
+        for sep in ["@", " in ", " IN "]:
+            if sep in time_string:
+                time_string, tz = time_string.split(sep)
+                break
 
-            return t1.strip(), t2.strip(), tz.strip()
-        except Exception as e:  # noqa
-            raise Exception(f"can't parse {time_string}")
+        # T1 - T2
+        t1 = time_string
+        for sep in [" to ", " TO ", " - "]:
+            if sep in time_string:
+                t1, t2 = time_string.split(sep)
+                break
 
-    def parse_time_string(self, time_string, tz):
-        return arrow.get(parse(time_string, ignoretz=True), tz)
+        return t1.strip(), t2.strip(), tz.strip()
+    except Exception as e:  # noqa
+        raise Exception(f"can't parse {time_string}")
+
+
+def parse_time_string(time_string, tz) -> arrow.Arrow:
+    return arrow.get(parse(time_string, ignoretz=True), tz)
