@@ -4,13 +4,14 @@ except ImportError:
     from backports import zoneinfo
 
 from datetime import datetime
-from typing import Dict, List
+from zoneinfo import ZoneInfo
 
 import airportsdata
 import arrow
 from dateutil.parser import parse
 
-from .config import Location, settings
+from .config import settings
+from .model import Location, Zone
 
 
 def location_by_key(key: str) -> Location:
@@ -35,13 +36,13 @@ def location_by_key(key: str) -> Location:
     return Location(key="", description="", tz=key)
 
 
-def when(time_string, location_keys) -> Dict:
+def when(time_string: str, location_keys: list[str]) -> list[Zone]:
     tzone = Tzone(time_string=time_string)
     zones = []
     for key in location_keys:
         location = location_by_key(key)
         zones.append(
-            dict(
+            Zone(
                 name=location.key,
                 description=location.description,
                 tz=str(location.tz),
@@ -53,7 +54,7 @@ def when(time_string, location_keys) -> Dict:
 
 
 class Tzone:
-    def __init__(self, time_string) -> None:
+    def __init__(self, time_string: str) -> None:
         self.time_string = time_string
 
         t1, t2, tz = split_time_string(self.time_string)
@@ -65,16 +66,16 @@ class Tzone:
         self.t1 = parse_time_string(t1, tz)
         self.t2 = parse_time_string(t2, tz) if t2 else self.t1
 
-    def convert(self, tz) -> List[datetime]:
+    def convert(self, tz: arrow.Arrow) -> list[datetime]:
         t1 = self.t1.to(tz)
         t2 = self.t2.to(tz)
         return [t.datetime for t in arrow.Arrow.range("hour", t1, t2)]
 
-    def utc_offset(self, tz):
+    def utc_offset(self, tz) -> int:
         return arrow.now(tz).utcoffset().total_seconds()
 
 
-def split_time_string(time_string) -> tuple[str, str, str]:
+def split_time_string(time_string: str) -> tuple[str, str, str]:
     """Split time range string into start, end, tz."""
     t1 = t2 = tz = ""
     try:
@@ -96,5 +97,5 @@ def split_time_string(time_string) -> tuple[str, str, str]:
         raise Exception(f"can't parse {time_string}")
 
 
-def parse_time_string(time_string, tz) -> arrow.Arrow:
+def parse_time_string(time_string: str, tz: ZoneInfo) -> arrow.Arrow:
     return arrow.get(parse(time_string, ignoretz=True), tz)

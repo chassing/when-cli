@@ -1,25 +1,9 @@
 from typing import List
 
-try:
-    import zoneinfo
-except ImportError:
-    from backports import zoneinfo
-
-from pydantic import BaseModel, BaseSettings, validator
+from pydantic import BaseSettings
 from tzlocal import get_localzone
 
-
-class Location(BaseModel):
-    key: str
-    description: str
-    tz: str
-
-    @validator("tz")
-    def tz_as_zoneinfo(cls, v):
-        try:
-            return zoneinfo.ZoneInfo(v)
-        except:  # noqa
-            raise ValueError(f"Unknown timezone '{v}'")
+from .model import Location
 
 
 class Settings(BaseSettings):

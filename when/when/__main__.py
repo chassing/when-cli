@@ -116,21 +116,17 @@ def main(
         print(f"[b red]Unknown timezone[/]: {e}")
         sys.exit(1)
 
-    zones = sorted(r, key=lambda x: x["offset"])
+    zones = sorted(r, key=lambda x: x.offset)
     table = Table(title="Time table", style=table_color, box=rich.box.ROUNDED, padding=table_padding)
     for zone in zones:
-        text = ""
-        if zone["description"]:
-            text += zone["description"]
-        if zone["name"]:
-            text += zone["name"]
-        if zone["description"] or zone["name"]:
+        text = zone.description + f" ({zone.name})" if zone.name else ""
+        if text:
             text += "\n"
-        text += zone["tz"]
+        text += zone.tz
         table.add_column(Text(text, justify="center", style=header_color))
 
     p_times = None
-    for times in zip(*[zone["times"] for zone in zones]):
+    for times in zip(*[zone.times for zone in zones]):
         row = []
         times = [dt.fromisoformat(t) for t in times]
 
