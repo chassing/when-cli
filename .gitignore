@@ -49,3 +49,5 @@ boilerplate/
 # nudev
 nudev_build
 .env
+nusetup.py
+dump/
