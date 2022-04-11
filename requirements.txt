@@ -7,7 +7,7 @@ rich-click==1.2.*
 arrow==1.2.*
 python-dateutil==2.8.*
 tzdata
-backports.zoneinfo
+#backports.zoneinfo
 pydantic==1.9.*
 airportsdata
 tzlocal==4.*
