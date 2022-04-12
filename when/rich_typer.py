@@ -13,7 +13,7 @@ Based on:
 Replace this hack if https://github.com/ewels/rich-click as full Typer support
 """
 import re
-from typing import Any, Callable, Tuple
+from typing import Tuple
 
 import rich_click as click
 import typer  # noqa: F401
@@ -27,30 +27,10 @@ from rich.text import Text
 from rich.theme import Theme
 from rich_click import RichCommand, RichGroup
 from rich_click.rich_click import _get_help_text, _make_command_help, _make_rich_rext, highlighter
-from typer import Typer as BaseTyper
-from typer.models import CommandFunctionType
 
 click.rich_click.STYLE_HELPTEXT = ""
 click.rich_click.SHOW_ENVVARS_COLUMN = False
 click.rich_click.STYLE_OPTION_ENVVARS = "dim"
-
-
-class Typer(BaseTyper):
-    """A custom subclassed version of typer.Typer to allow rich help."""
-
-    def __init__(self, *args, cls=RichGroup, **kwargs) -> None:
-        """Initialise with a RichGroup class as the default."""
-        super().__init__(*args, cls=cls, **kwargs)
-
-    def command(self, *args, cls=RichCommand, **kwargs) -> Callable[[CommandFunctionType], CommandFunctionType]:
-        return super().command(*args, cls=cls, **kwargs)
-
-
-def run(function: Callable[..., Any]) -> Any:
-    """Redefine typer.run() to use our custom Typer class."""  # noqa D402
-    app = Typer()
-    app.command()(function)
-    app()
 
 
 def rich_format_help(obj, ctx, formatter):
@@ -367,6 +347,6 @@ def blend_text(message: str, color1: Tuple[int, int, int], color2: Tuple[int, in
     return text
 
 
-typer.run = run
-click.rich_click.rich_format_help = rich_format_help
-click.rich_click._get_parameter_help = _get_parameter_help
+RichCommand.format_help = rich_format_help
+RichGroup.format_help = rich_format_help
+

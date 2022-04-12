@@ -15,7 +15,9 @@ from rich.table import Table
 from rich.text import Text
 
 from when.config import settings
-from when.rich_typer import blend_text, click, typer
+from when import rich_typer
+import rich_click as click
+import rich_click.typer as typer
 from when.when import when
 
 click.rich_click.USE_RICH_MARKUP = True
@@ -23,7 +25,8 @@ click.rich_click.SHOW_ARGUMENTS = True
 click.rich_click.GROUP_ARGUMENTS_OPTIONS = False
 click.rich_click.SHOW_METAVARS_COLUMN = True
 click.rich_click.SHOW_ENVVARS_COLUMN = True
-click.rich_click.FOOTER_TEXT = blend_text(
+
+click.rich_click.FOOTER_TEXT = rich_typer.blend_text(
     "Made with ♥ by https://github.com/chassing/when-cli", (32, 32, 255), (255, 32, 255)
 )
 click.rich_click.STYLE_FOOTER_TEXT = "#D920FF"
