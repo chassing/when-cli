@@ -59,11 +59,11 @@ jobs:
       - name: Install dependencies
         run: |
           poetry env use "${{ matrix.python }}"
-          poetry install --no-interaction
+          poetry install --no-interaction --no-root
 
       - name: Pyinstaller
         run: |
-          pyinstaller --clean -y --dist "./dist/${{ matrix.target }}" --workpath /tmp when-cli.spec
+          poetry run pyinstaller --clean -y --dist "./dist/${{ matrix.target }}" --workpath /tmp when-cli.spec
 
       - uses: actions/upload-artifact@v3
         with:
