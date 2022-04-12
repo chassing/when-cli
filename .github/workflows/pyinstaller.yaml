@@ -1,36 +1,94 @@
-name: Package Application with Pyinstaller
+name: Package Application
 
 on:
   push:
-    branches: [master]
-  pull_request:
-    branches: [master]
+    branches:
+      - master
 
 jobs:
-  build:
-    runs-on: ubuntu-18.04
+  # Update release PR
+  release_please:
+    name: Release Please
+    runs-on: ubuntu-latest
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
+    steps:
+      - uses: google-github-actions/release-please-action@v3
+        id: release
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          release-type: python
+
+  github_build:
+    name: Build release binaries
+    needs: release_please
+    # if: ${{ needs.release_please.outputs.release_created }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: x86_64-unknown-linux-gnu
+            os: ubuntu-18.04
+            name: when-cli-x86_64-unknown-linux-gnu
+            python: "3.10"
+
+          # - target: x86_64-apple-darwin
+          #   os: macOS-11
+          #   name: when-cli-x86_64-apple-darwin
+
+          # - target: aarch64-apple-darwin
+          #   os: macOS-11
+          #   name: when-cli-aarch64-apple-darwin
+
+    runs-on: ${{ matrix.os }}
+    continue-on-error: true
 
     steps:
-      - uses: actions/checkout@v2
-      - name: Set up Python 3.10
-        uses: actions/setup-python@v2
+      - uses: actions/checkout@v3
+
+      - name: Install poetry
+        run: pipx install poetry
+
+      - name: Set up Python ${{ matrix.python }}
+        uses: actions/setup-python@v3
         with:
-          python-version: "3.10"
-      - uses: actions/cache@v2
-        name: Configure pip caching
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/setup.py') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
+          python-version: ${{ matrix.python }}
+          cache: "poetry"
+
       - name: Install dependencies
         run: |
-          pip install -r requirements-test.txt
-          pip freeze
+          poetry install
+
       - name: Pyinstaller
         run: |
-          pyinstaller --clean -y --dist ./dist/linux --workpath /tmp --onedir when-cli.spec
-      - uses: actions/upload-artifact@v2
+          pyinstaller --clean -y --dist "./dist/${{ matrix.target }}" --workpath /tmp when-cli.spec
+
+      - uses: actions/upload-artifact@v3
         with:
-          name: when-cli-linux
-          path: ./dist/linux
+          name: ${{ matrix.target }}
+          path: "./dist/${{ matrix.target }}"
+
+  # Create GitHub release with build targets and release notes
+  upload_artifacts:
+    name: Add Build Artifacts to Release
+    needs: [release_please, github_build]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup | Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup | Artifacts
+        uses: actions/download-artifact@v3
+
+      - name: Setup | Checksums
+        run: for file in dist/when-cli-*; do openssl dgst -sha256 -r "$file" | awk '{print $1}' > "${file}.sha256"; done
+
+      - name: Build | Add Artifacts to Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: dist/when-cli-*
+          tag_name: master
+          # tag_name: ${{ needs.release_please.outputs.release_created }}
