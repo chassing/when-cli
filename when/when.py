@@ -64,21 +64,20 @@ class Tzone:
         self.time_string = time_string
 
         t1, t2, tz = split_time_string(self.time_string)
-        if not tz:
-            tz = settings.default_tz
-        else:
-            tz = location_by_key(tz).tz
+        tz = location_by_key(tz if tz else settings.default_tz).tz
 
         self.t1 = parse_time_string(t1, tz)
         self.t2 = parse_time_string(t2, tz) if t2 else self.t1
 
-    def convert(self, tz: arrow.Arrow) -> list[datetime]:
+    def convert(self, tz: ZoneInfo | str) -> list[datetime]:
         t1 = self.t1.to(tz)
         t2 = self.t2.to(tz)
         return [t.datetime for t in arrow.Arrow.range("hour", t1, t2)]
 
     def utc_offset(self, tz) -> int:
-        return arrow.now(tz).utcoffset().total_seconds()
+        if offset := arrow.now(tz).utcoffset():
+            return int(offset.total_seconds())
+        return 0
 
 
 def split_time_string(time_string: str) -> tuple[str, str, str]:
@@ -103,5 +102,5 @@ def split_time_string(time_string: str) -> tuple[str, str, str]:
         raise Exception(f"can't parse {time_string}")
 
 
-def parse_time_string(time_string: str, tz: ZoneInfo) -> arrow.Arrow:
+def parse_time_string(time_string: str, tz: ZoneInfo | str) -> arrow.Arrow:
     return arrow.get(parse(time_string, ignoretz=True), tz)

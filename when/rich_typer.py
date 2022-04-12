@@ -15,8 +15,12 @@ Replace this hack if https://github.com/ewels/rich-click as full Typer support
 import re
 from typing import Tuple
 
+import click.core
+import click.types
 import rich_click as click
+import rich_click.rich_click
 import typer  # noqa: F401
+import typer.core
 from rich.align import Align
 from rich.columns import Columns
 from rich.console import Console
@@ -28,9 +32,7 @@ from rich.theme import Theme
 from rich_click import RichCommand, RichGroup
 from rich_click.rich_click import _get_help_text, _make_command_help, _make_rich_rext, highlighter
 
-click.rich_click.STYLE_HELPTEXT = ""
-click.rich_click.SHOW_ENVVARS_COLUMN = False
-click.rich_click.STYLE_OPTION_ENVVARS = "dim"
+rich_click.rich_click.STYLE_HELPTEXT = ""
 
 
 def rich_format_help(obj, ctx, formatter):
@@ -51,24 +53,27 @@ def rich_format_help(obj, ctx, formatter):
     console = Console(
         theme=Theme(
             {
-                "option": click.rich_click.STYLE_OPTION,
-                "switch": click.rich_click.STYLE_SWITCH,
-                "metavar": click.rich_click.STYLE_METAVAR,
-                "usage": click.rich_click.STYLE_USAGE,
+                "option": rich_click.rich_click.STYLE_OPTION,
+                "switch": rich_click.rich_click.STYLE_SWITCH,
+                "metavar": rich_click.rich_click.STYLE_METAVAR,
+                "usage": rich_click.rich_click.STYLE_USAGE,
             }
         ),
         highlighter=highlighter,
-        color_system=click.rich_click.COLOR_SYSTEM,
+        color_system=rich_click.rich_click.COLOR_SYSTEM,
     )
 
     # Header text if we have it
-    if click.rich_click.HEADER_TEXT:
+    if rich_click.rich_click.HEADER_TEXT:
         console.print(
-            Padding(_make_rich_rext(click.rich_click.HEADER_TEXT, click.rich_click.STYLE_HEADER_TEXT), (1, 1, 0, 1))
+            Padding(
+                _make_rich_rext(rich_click.rich_click.HEADER_TEXT, rich_click.rich_click.STYLE_HEADER_TEXT),
+                (1, 1, 0, 1),
+            )
         )
 
     # Print usage
-    console.print(Padding(highlighter(obj.get_usage(ctx)), 1), style=click.rich_click.STYLE_USAGE_COMMAND)
+    console.print(Padding(highlighter(obj.get_usage(ctx)), 1), style=rich_click.rich_click.STYLE_USAGE_COMMAND)
 
     # Print command / group help if we have some
     if obj.help:
@@ -76,21 +81,21 @@ def rich_format_help(obj, ctx, formatter):
         # Print with a max width and some padding
         console.print(
             Padding(
-                Align(_get_help_text(obj), width=click.rich_click.MAX_WIDTH, pad=False),
+                Align(_get_help_text(obj), width=rich_click.rich_click.MAX_WIDTH, pad=False),
                 (0, 1, 1, 1),
             )
         )
 
     # Look through OPTION_GROUPS for this command
     # stick anything unmatched into a default group at the end
-    option_groups = click.rich_click.OPTION_GROUPS.get(ctx.command_path, []).copy()
+    option_groups = rich_click.rich_click.OPTION_GROUPS.get(ctx.command_path, []).copy()
     option_groups.append({"options": []})
-    argument_groups = {"name": click.rich_click.ARGUMENTS_PANEL_TITLE, "options": []}
+    argument_groups = {"name": rich_click.rich_click.ARGUMENTS_PANEL_TITLE, "options": []}
     for param in obj.get_params(ctx):
 
         # Skip positional arguments - they don't have opts or helptext and are covered in usage
         # See https://click.palletsprojects.com/en/8.0.x/documentation/#documenting-arguments
-        if type(param) in [click.core.Argument, typer.core.TyperArgument] and not click.rich_click.SHOW_ARGUMENTS:
+        if type(param) in [click.core.Argument, typer.core.TyperArgument] and not rich_click.rich_click.SHOW_ARGUMENTS:
             continue
 
         # Skip if option is hidden
@@ -105,11 +110,11 @@ def rich_format_help(obj, ctx, formatter):
         else:
             if (
                 type(param) in [click.core.Argument, typer.core.TyperArgument]
-                and not click.rich_click.GROUP_ARGUMENTS_OPTIONS
+                and not rich_click.rich_click.GROUP_ARGUMENTS_OPTIONS
             ):
                 argument_groups["options"].append(param.opts[0])
             else:
-                option_groups[-1]["options"].append(param.opts[0])
+                option_groups[-1]["options"].append(param.opts[0])  # type: ignore
 
     # If we're not grouping arguments and we got some, prepend before default options
     if len(argument_groups["options"]) > 0:
@@ -142,7 +147,7 @@ def rich_format_help(obj, ctx, formatter):
                     opt_short_strs.append(opt_str)
 
             # Column for a metavar, if we have one
-            metavar = Text(style=click.rich_click.STYLE_METAVAR)
+            metavar = Text(style=rich_click.rich_click.STYLE_METAVAR)
             metavar_str = param.make_metavar()
             # Do it ourselves if this is a positional argument
             if type(param) in [click.core.Argument, typer.core.TyperArgument] and metavar_str == param.name.upper():
@@ -160,7 +165,7 @@ def rich_format_help(obj, ctx, formatter):
                 ):
                     range_str = param.type._describe_range()
                     if range_str:
-                        metavar.append(click.rich_click.RANGE_STRING.format(range_str))
+                        metavar.append(rich_click.rich_click.RANGE_STRING.format(range_str))
             except AttributeError:
                 # click.types._NumberRangeBase is only in Click 8x onwards
                 pass
@@ -168,7 +173,9 @@ def rich_format_help(obj, ctx, formatter):
             # Required asterisk
             required = ""
             if param.required:
-                required = Text(click.rich_click.REQUIRED_SHORT_STRING, style=click.rich_click.STYLE_REQUIRED_SHORT)
+                required = Text(
+                    rich_click.rich_click.REQUIRED_SHORT_STRING, style=rich_click.rich_click.STYLE_REQUIRED_SHORT
+                )
 
             rows = [
                 required,
@@ -179,7 +186,7 @@ def rich_format_help(obj, ctx, formatter):
             ]
 
             # Remove metavar if specified in config
-            if not click.rich_click.SHOW_METAVARS_COLUMN:
+            if not rich_click.rich_click.SHOW_METAVARS_COLUMN:
                 rows.pop(3)
 
             options_rows.append(rows)
@@ -194,10 +201,10 @@ def rich_format_help(obj, ctx, formatter):
             console.print(
                 Panel(
                     options_table,
-                    border_style=click.rich_click.STYLE_OPTIONS_PANEL_BORDER,
-                    title=option_group.get("name", click.rich_click.OPTIONS_PANEL_TITLE),
-                    title_align=click.rich_click.ALIGN_OPTIONS_PANEL,
-                    width=click.rich_click.MAX_WIDTH,
+                    border_style=rich_click.rich_click.STYLE_OPTIONS_PANEL_BORDER,
+                    title=option_group.get("name", rich_click.rich_click.OPTIONS_PANEL_TITLE),  # type: ignore
+                    title_align=rich_click.rich_click.ALIGN_OPTIONS_PANEL,
+                    width=rich_click.rich_click.MAX_WIDTH,
                 )
             )
 
@@ -208,14 +215,14 @@ def rich_format_help(obj, ctx, formatter):
     if hasattr(obj, "list_commands"):
         # Look through COMMAND_GROUPS for this command
         # stick anything unmatched into a default group at the end
-        cmd_groups = click.rich_click.COMMAND_GROUPS.get(ctx.command_path, []).copy()
+        cmd_groups = rich_click.rich_click.COMMAND_GROUPS.get(ctx.command_path, []).copy()
         cmd_groups.append({"commands": []})
         for command in obj.list_commands(ctx):
             for cmd_group in cmd_groups:
                 if command in cmd_group.get("commands", []):
                     break
             else:
-                cmd_groups[-1]["commands"].append(command)
+                cmd_groups[-1]["commands"].append(command)  # type: ignore
 
         # Print each command group panel
         for cmd_group in cmd_groups:
@@ -228,7 +235,7 @@ def rich_format_help(obj, ctx, formatter):
                     continue
                 cmd = obj.get_command(ctx, command)
                 # Use the truncated short text as with vanilla text if requested
-                if click.rich_click.USE_CLICK_SHORT_HELP:
+                if rich_click.rich_click.USE_CLICK_SHORT_HELP:
                     helptext = cmd.get_short_help_str()
                 else:
                     # Use short_help function argument if used, or the full help
@@ -238,10 +245,10 @@ def rich_format_help(obj, ctx, formatter):
                 console.print(
                     Panel(
                         commands_table,
-                        border_style=click.rich_click.STYLE_COMMANDS_PANEL_BORDER,
-                        title=cmd_group.get("name", click.rich_click.COMMANDS_PANEL_TITLE),
-                        title_align=click.rich_click.ALIGN_COMMANDS_PANEL,
-                        width=click.rich_click.MAX_WIDTH,
+                        border_style=rich_click.rich_click.STYLE_COMMANDS_PANEL_BORDER,
+                        title=cmd_group.get("name", rich_click.rich_click.COMMANDS_PANEL_TITLE),  # type: ignore
+                        title_align=rich_click.rich_click.ALIGN_COMMANDS_PANEL,
+                        width=rich_click.rich_click.MAX_WIDTH,
                     )
                 )
 
@@ -250,11 +257,11 @@ def rich_format_help(obj, ctx, formatter):
         # Remove single linebreaks, replace double with single
         lines = obj.epilog.split("\n\n")
         epilogue = "\n".join([x.replace("\n", " ").strip() for x in lines])
-        console.print(Padding(Align(highlighter(epilogue), width=click.rich_click.MAX_WIDTH, pad=False), 1))
+        console.print(Padding(Align(highlighter(epilogue), width=rich_click.rich_click.MAX_WIDTH, pad=False), 1))
 
     # Footer text if we have it
-    if click.rich_click.FOOTER_TEXT:
-        console.print(click.rich_click.FOOTER_TEXT, justify="right")
+    if rich_click.rich_click.FOOTER_TEXT:
+        console.print(rich_click.rich_click.FOOTER_TEXT, justify="right")
 
 
 def _get_parameter_help(param, ctx):
@@ -277,15 +284,15 @@ def _get_parameter_help(param, ctx):
     if getattr(param, "help", None):
         paragraphs = param.help.split("\n\n")
         # Remove single linebreaks
-        if not click.rich_click.USE_MARKDOWN:
+        if not rich_click.rich_click.USE_MARKDOWN:
             paragraphs = [
                 x.replace("\n", " ").strip() if not x.startswith("\b") else "{}\n".format(x.strip("\b\n"))
                 for x in paragraphs
             ]
-        items.append(_make_rich_rext("\n".join(paragraphs).strip(), click.rich_click.STYLE_OPTION_HELP))
+        items.append(_make_rich_rext("\n".join(paragraphs).strip(), rich_click.rich_click.STYLE_OPTION_HELP))
 
     # Append metavar if requested
-    if click.rich_click.APPEND_METAVARS_HELP:
+    if rich_click.rich_click.APPEND_METAVARS_HELP:
         metavar_str = param.make_metavar()
         # Do it ourselves if this is a positional argument
         if type(param) in [click.core.Argument, typer.core.TyperArgument] and metavar_str == param.name.upper():
@@ -295,8 +302,8 @@ def _get_parameter_help(param, ctx):
             metavar_str = metavar_str.replace("[", "").replace("]", "")
             items.append(
                 Text(
-                    click.rich_click.APPEND_METAVARS_HELP_STRING.format(metavar_str),
-                    style=click.rich_click.STYLE_METAVAR_APPEND,
+                    rich_click.rich_click.APPEND_METAVARS_HELP_STRING.format(metavar_str),
+                    style=rich_click.rich_click.STYLE_METAVAR_APPEND,
                 )
             )
 
@@ -311,20 +318,19 @@ def _get_parameter_help(param, ctx):
             default_str = default_str_match.group(1).replace("; required", "")
             items.append(
                 Text(
-                    click.rich_click.DEFAULT_STRING.format(default_str),
-                    style=click.rich_click.STYLE_OPTION_DEFAULT,
+                    rich_click.rich_click.DEFAULT_STRING.format(default_str),
+                    style=rich_click.rich_click.STYLE_OPTION_DEFAULT,
                 )
             )
 
-    if click.rich_click.SHOW_ENVVARS_COLUMN:
-        envvar = getattr(param, "envvar")
-        # allow_from_autoenv is currently not supported in Typer for CLI Arguments
-        if envvar is not None:
-            var_str = ", ".join(str(d) for d in envvar) if isinstance(envvar, (list, tuple)) else envvar
-            items.append(Text(f"[env var: {var_str}]", style=click.rich_click.STYLE_OPTION_ENVVARS))  # noqa: W605
+    envvar = getattr(param, "envvar")
+    # allow_from_autoenv is currently not supported in Typer for CLI Arguments
+    if envvar is not None:
+        var_str = ", ".join(str(d) for d in envvar) if isinstance(envvar, (list, tuple)) else envvar
+        items.append(Text(f"[env var: {var_str}]", style="dim"))  # noqa: W605
     # Required?
     if param.required:
-        items.append(Text(click.rich_click.REQUIRED_LONG_STRING, style=click.rich_click.STYLE_REQUIRED_LONG))
+        items.append(Text(rich_click.rich_click.REQUIRED_LONG_STRING, style=rich_click.rich_click.STYLE_REQUIRED_LONG))
 
     # Use Columns - this allows us to group different renderable types
     # (Text, Markdown) onto a single line.
@@ -347,6 +353,5 @@ def blend_text(message: str, color1: Tuple[int, int, int], color2: Tuple[int, in
     return text
 
 
-RichCommand.format_help = rich_format_help
-RichGroup.format_help = rich_format_help
-
+RichCommand.format_help = rich_format_help  # type: ignore
+RichGroup.format_help = rich_format_help  # type: ignore

@@ -5,27 +5,25 @@ from datetime import datetime as dt
 from typing import List
 
 import rich.box
+import rich_click.rich_click
+import rich_click.typer as typer
 from rich import print
 from rich.style import Style
 from rich.table import Table
 from rich.text import Text
 
-from when.config import settings
 from when import rich_typer
-import rich_click as click
-import rich_click.typer as typer
+from when.config import settings
 from when.when import when
 
-click.rich_click.USE_RICH_MARKUP = True
-click.rich_click.SHOW_ARGUMENTS = True
-click.rich_click.GROUP_ARGUMENTS_OPTIONS = False
-click.rich_click.SHOW_METAVARS_COLUMN = True
-click.rich_click.SHOW_ENVVARS_COLUMN = True
-
-click.rich_click.FOOTER_TEXT = rich_typer.blend_text(
+rich_click.rich_click.USE_RICH_MARKUP = True
+rich_click.rich_click.SHOW_ARGUMENTS = True
+rich_click.rich_click.GROUP_ARGUMENTS_OPTIONS = False
+rich_click.rich_click.SHOW_METAVARS_COLUMN = True
+rich_click.rich_click.FOOTER_TEXT = rich_typer.blend_text(
     "Made with ♥ by https://github.com/chassing/when-cli", (32, 32, 255), (255, 32, 255)
 )
-click.rich_click.STYLE_FOOTER_TEXT = "#D920FF"
+rich_click.rich_click.STYLE_FOOTER_TEXT = "#D920FF"
 
 locale.setlocale(locale.LC_ALL, "")
 locale.setlocale(locale.LC_TIME, "")
