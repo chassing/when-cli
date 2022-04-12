@@ -8,7 +8,7 @@ from PyInstaller.utils.hooks import collect_data_files, collect_submodules
 block_cipher = None
 
 extra_files = []
-extra_folders = ["when/when/data"]
+extra_folders = ["when/data"]
 extra_pyinstaller_files = []
 
 # Process the extra-files and folders
@@ -21,7 +21,7 @@ for folder_item in extra_folders:
 extra_pyinstaller_files += collect_data_files('airportsdata')
 
 
-a = Analysis(['when/when/__main__.py'],
+a = Analysis(['when/__main__.py'],
              pathex=[],
              binaries=[],
              datas=extra_pyinstaller_files,

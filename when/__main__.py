@@ -85,8 +85,8 @@ def main(
         None, is_flag=True, is_eager=True, expose_value=False, callback=show_usage, help="Show usage."
     ),
 ):
-    """[b yellow]when-cli[/] is a small timezone conversation tool. It takes as input a natural given time string
-    (can also be a time range) and converts it into different timezone at specific locations.
+    """[b yellow]when-cli[/] is a timezone conversion tool. It takes as input a natural time string, can also be a time range,
+    and converts it into different timezone(s) at specific location(s).
 
     \b
     ---
