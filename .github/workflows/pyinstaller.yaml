@@ -96,4 +96,4 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: when-cli-*/*
-          tag_name: ${{ needs.release_please.outputs.release_created }}
+          tag_name: ${{ needs.release_please.outputs.tag_name }}
