@@ -2,21 +2,21 @@
 <p align="center">
   <img
     width="400"
-    src="https://github.com/chassing/when-cli/raw/master/media/logo.jpg"
+    src="https://raw.githubusercontent.com/chassing/when-cli/master/media/logo.jpg"
     alt="When CLI"
   />
 </p>
 
 [![PyPI version][pypi-version]][pypi-link]
 [![PyPI platforms][pypi-platforms]][pypi-link]
+[![Black][black-badge]][black-link]
 
 
-<h1></h1>
 
 # When CLI
 
 <img
-  src="https://github.com/chassing/when-cli/raw/master/media/example.png"
+  src="https://raw.githubusercontent.com/chassing/when-cli/master/media/example.png"
   alt="Example"
   width="50%"
   align="right"
@@ -76,3 +76,14 @@ Please make sure to update tests as appropriate.
 ## Logo
 
 [vecteezy.com](https://www.vecteezy.com/vector-art/633173-clock-icon-symbol-sign)
+
+
+
+[black-badge]:              https://img.shields.io/badge/code%20style-black-000000.svg
+[black-link]:               https://github.com/psf/black
+[github-discussions-badge]: https://img.shields.io/static/v1?label=Discussions&message=Ask&color=blue&logo=github
+[github-discussions-link]:  https://github.com/chassing/when-cli/discussions
+[pypi-link]:                https://pypi.org/project/when-cli/
+[pypi-platforms]:           https://img.shields.io/pypi/pyversions/when-cli
+[pypi-version]:             https://badge.fury.io/py/when-cli.svg
+
