@@ -2,7 +2,7 @@
 <p align="center">
   <img
     width="400"
-    src="https://raw.githubusercontent.com/chassing/when-cli/master/media/logo.png"
+    src="https://github.com/chassing/when-cli/raw/master/media/logo.jpg"
     alt="When CLI"
   />
 </p>
@@ -16,7 +16,7 @@
 # When CLI
 
 <img
-  src="https://raw.githubusercontent.com/chassing/when-cli/master/media/example.png"
+  src="https://github.com/chassing/when-cli/raw/master/media/example.png"
   alt="Example"
   width="50%"
   align="right"
