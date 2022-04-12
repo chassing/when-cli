@@ -32,7 +32,7 @@
 
 ## Installation
 
-You can install **when-cli** from [PyPI](https://pypi.org/project/pyworkon/) with `pipx` (preferred):
+You can install **when-cli** from [PyPI](https://pypi.org/project/when-cli/) with `pipx` (preferred):
 
 ```bash
 pipx install pyworkon
@@ -64,6 +64,9 @@ when-cli "7. May 06:00 to May 7th 12:00 in PMI" -l America/Los_Angeles -l klu -l
 │07.05.2022 03:00 UTC-07:00 │07.05.2022 12:00 UTC+02:00 │07.05.2022 12:00 UTC+02:00         │
 ╰───────────────────────────┴───────────────────────────┴───────────────────────────────────╯
 ```
+
+See [Usage](https://github.com/chassing/when-cli/blob/master/USAGE.md) for more details.
+
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
