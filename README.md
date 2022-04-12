@@ -32,18 +32,18 @@
 
 ## Installation
 
-You can install **when-cli** from [PyPI](https://pypi.org/project/when-cli/) with `pipx` (preferred):
+You can install **when-cli** from [PyPI](https://pypi.org/project/when-cli/) with `pipx`):
 
 ```bash
-pipx install pyworkon
+pipx install when-cli
 ```
 
 or install it with `pip`:
 ```bash
-python3 -m pip install pyworkon
+python3 -m pip install when-cli
 ```
 
-You can also download and use the pre-build binary from the latest [Release](https://github.com/chassing/when-cli/releases)
+You can also download and use the pre-build binary from the latest [Release](https://github.com/chassing/when-cli/releases).
 
 
 ## Usage
