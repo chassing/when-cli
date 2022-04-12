@@ -1,9 +1,5 @@
-try:
-    import zoneinfo
-except ImportError:
-    from backports import zoneinfo
-
 import json
+import zoneinfo
 from datetime import datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo

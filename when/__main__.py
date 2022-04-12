@@ -1,12 +1,8 @@
 import locale
 import sys
+import zoneinfo
 from datetime import datetime as dt
 from typing import List
-
-try:
-    import zoneinfo
-except ImportError:
-    from backports import zoneinfo
 
 import rich.box
 from rich import print
