@@ -1,9 +1,6 @@
-from pydantic import BaseModel, validator
+import zoneinfo
 
-try:
-    import zoneinfo
-except ImportError:
-    from backports import zoneinfo
+from pydantic import BaseModel, validator
 
 
 class Location(BaseModel):
