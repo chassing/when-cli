@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "when-cli"
-version = "1.0.0"
+version = "0.0"
 description = "When CLI is a timezone conversion tool. It takes as input a natural time string, can also be a time range, and converts it into different timezone(s) at specific location(s)."
 authors = ["Christian Assing <chris@ca-net.org>"]
 license = "MIT"
@@ -20,7 +20,8 @@ tzlocal = "^4.2"
 [tool.poetry.dev-dependencies]
 pytest = "^7.1.1"
 pyinstaller = "^4.10"
+bump2version = "^1.0.1"
 
 [build-system]
-requires = ["poetry-core>=1.0.0"]
+requires = ["poetry-core>=1.1.0"]
 build-backend = "poetry.core.masonry.api"
