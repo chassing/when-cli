@@ -1,28 +1,68 @@
+
+<p align="center">
+  <img
+    width="400"
+    src="https://raw.githubusercontent.com/chassing/when-cli/master/media/logo.png"
+    alt="When CLI"
+  />
+</p>
+
+[![PyPI version][pypi-version]][pypi-link]
+[![PyPI platforms][pypi-platforms]][pypi-link]
+
+
+<h1></h1>
+
 # When CLI
 
-Foobar is a Python library for dealing with word pluralization.
+<img
+  src="https://raw.githubusercontent.com/chassing/when-cli/master/media/example.png"
+  alt="Example"
+  width="50%"
+  align="right"
+/>
+
+**when-cli** is a timezone conversion tool. It takes as input a natural time string, can also be a time range, and converts it into different timezone(s) at specific location(s).
+
+- **Local:** Everything runs on your local machine, no internet connection needed
+- **Fast:** it's fast! 🚀
+- **Easy:** quick to install – start using it in minutes.
+- **Customizable:** configure every aspect to your needs.
+
 
 ## Installation
 
-Use the package manager [pip](https://pip.pypa.io/en/stable/) to install foobar.
+You can install **when-cli** from [PyPI](https://pypi.org/project/pyworkon/) with `pipx` (preferred):
 
 ```bash
-pip install foobar
+pipx install pyworkon
 ```
+
+or install it with `pip`:
+```bash
+python3 -m pip install pyworkon
+```
+
+You can also download and use the pre-build binary from the latest [Release](https://github.com/chassing/when-cli/releases)
+
 
 ## Usage
 
-```python
-import foobar
-
-# returns 'words'
-foobar.pluralize('word')
-
-# returns 'geese'
-foobar.pluralize('goose')
-
-# returns 'phenomenon'
-foobar.singularize('phenomena')
+```bash
+when-cli "7. May 06:00 to May 7th 12:00 in PMI" -l America/Los_Angeles -l klu -l PMI
+                                         Time table
+╭───────────────────────────┬───────────────────────────┬───────────────────────────────────╮
+│                           │ Klagenfurt, Austria (klu) │Palma De Mallorca Airport, ES (PMI)│
+│    America/Los_Angeles    │       Europe/Vienna       │           Europe/Madrid           │
+├───────────────────────────┼───────────────────────────┼───────────────────────────────────┤
+│06.05.2022 21:00 UTC-07:00 │07.05.2022 06:00 UTC+02:00 │07.05.2022 06:00 UTC+02:00         │
+│06.05.2022 22:00 UTC-07:00 │07.05.2022 07:00 UTC+02:00 │07.05.2022 07:00 UTC+02:00         │
+│06.05.2022 23:00 UTC-07:00 │07.05.2022 08:00 UTC+02:00 │07.05.2022 08:00 UTC+02:00         │
+│07.05.2022 00:00 UTC-07:00 │07.05.2022 09:00 UTC+02:00 │07.05.2022 09:00 UTC+02:00         │
+│07.05.2022 01:00 UTC-07:00 │07.05.2022 10:00 UTC+02:00 │07.05.2022 10:00 UTC+02:00         │
+│07.05.2022 02:00 UTC-07:00 │07.05.2022 11:00 UTC+02:00 │07.05.2022 11:00 UTC+02:00         │
+│07.05.2022 03:00 UTC-07:00 │07.05.2022 12:00 UTC+02:00 │07.05.2022 12:00 UTC+02:00         │
+╰───────────────────────────┴───────────────────────────┴───────────────────────────────────╯
 ```
 
 ## Contributing
@@ -32,3 +72,7 @@ Please make sure to update tests as appropriate.
 
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
+
+## Logo
+
+[vecteezy.com](https://www.vecteezy.com/vector-art/633173-clock-icon-symbol-sign)
