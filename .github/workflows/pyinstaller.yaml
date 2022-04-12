@@ -23,7 +23,7 @@ jobs:
   github_build:
     name: Build release binaries
     needs: release_please
-    # if: ${{ needs.release_please.outputs.release_created }}
+    if: ${{ needs.release_please.outputs.release_created }}
     strategy:
       fail-fast: false
       matrix:
@@ -79,6 +79,7 @@ jobs:
     name: Add Build Artifacts to Release
     needs: [release_please, github_build]
     runs-on: ubuntu-latest
+    if: ${{ needs.release_please.outputs.release_created }}
     steps:
       - name: Setup | Checkout
         uses: actions/checkout@v3
@@ -95,5 +96,4 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: when-cli-*/*
-          tag_name: master
-          # tag_name: ${{ needs.release_please.outputs.release_created }}
+          tag_name: ${{ needs.release_please.outputs.release_created }}
