@@ -28,8 +28,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - target: x86_64-unknown-linux-gnu
-            os: ubuntu-18.04
+          - os: ubuntu-18.04
             name: when-cli-x86_64-unknown-linux-gnu
             python: "3.10"
 
@@ -63,12 +62,12 @@ jobs:
 
       - name: Pyinstaller
         run: |
-          poetry run pyinstaller --clean -y --dist "./dist/${{ matrix.target }}" --workpath /tmp when-cli.spec
+          poetry run pyinstaller --clean -y --dist "./dist/${{ matrix.name }}" --workpath /tmp when-cli.spec
 
       - uses: actions/upload-artifact@v3
         with:
-          name: ${{ matrix.target }}
-          path: "./dist/${{ matrix.target }}"
+          name: ${{ matrix.name }}
+          path: "./dist/${{ matrix.name }}"
 
   # Create GitHub release with build targets and release notes
   upload_artifacts:
@@ -85,11 +84,11 @@ jobs:
         uses: actions/download-artifact@v3
 
       - name: Setup | Checksums
-        run: for file in dist/when-cli-*; do openssl dgst -sha256 -r "$file" | awk '{print $1}' > "${file}.sha256"; done
+        run: for file in when-cli-*; do openssl dgst -sha256 -r "$file" | awk '{print $1}' > "${file}.sha256"; done
 
       - name: Build | Add Artifacts to Release
         uses: softprops/action-gh-release@v1
         with:
-          files: dist/when-cli-*
+          files: when-cli-*
           tag_name: master
           # tag_name: ${{ needs.release_please.outputs.release_created }}
