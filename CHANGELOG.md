@@ -4,6 +4,18 @@
 
 [1]: https://pypi.org/project/when-cli/#history
 
+## [1.1.0](https://github.com/chassing/when-cli/compare/v1.0.1...v1.1.0) (2022-04-13)
+
+
+### Features
+
+* show brief usage via --usage option ([#10](https://github.com/chassing/when-cli/issues/10)) ([e3ae320](https://github.com/chassing/when-cli/commit/e3ae320cba6c8bcf02f3a24c6640750d4033194e))
+
+
+### Bug Fixes
+
+* type hints fixes ([00cde76](https://github.com/chassing/when-cli/commit/00cde76ec4ce95c295ba40dcc4960a121ea841e8))
+
 ### [1.0.1](https://github.com/chassing/when-cli/compare/v1.0.0...v1.0.1) (2022-04-12)
 
 
