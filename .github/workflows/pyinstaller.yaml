@@ -61,6 +61,10 @@ jobs:
           poetry env use "${{ matrix.python }}"
           poetry install --no-interaction --no-root
 
+      - name: Unittests
+        run: |
+          poetry run pytest tests
+
       - name: Pyinstaller
         run: |
           poetry run pyinstaller --clean -y --dist "./dist/${{ matrix.target }}" --workpath /tmp when-cli.spec

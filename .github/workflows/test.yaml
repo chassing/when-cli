@@ -1,0 +1,50 @@
+name: Test
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  test:
+    name: Unittests
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: x86_64-unknown-linux-gnu
+            os: ubuntu-18.04
+            name: when-cli-x86_64-unknown-linux-gnu.tar.gz
+            python: "3.10"
+
+          # - target: x86_64-apple-darwin
+          #   os: macOS-11
+          #   name: when-cli-x86_64-apple-darwin
+
+          # - target: aarch64-apple-darwin
+          #   os: macOS-11
+          #   name: when-cli-aarch64-apple-darwin
+
+    runs-on: ${{ matrix.os }}
+    continue-on-error: true
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install poetry
+        run: pipx install poetry
+
+      - name: Set up Python ${{ matrix.python }}
+        uses: actions/setup-python@v3
+        with:
+          python-version: ${{ matrix.python }}
+          cache: "poetry"
+
+      - name: Install dependencies
+        run: |
+          poetry env use "${{ matrix.python }}"
+          poetry install --no-interaction --no-root
+
+      - name: Unittests
+        run: |
+          poetry run pytest tests
