@@ -170,7 +170,7 @@ It's a JSON list of dictionaries in this format:
 
 example:
 ```
-$ export WHEN_CONFIG_LOCATIONS='[{ "key": "🏠", "description": "On my couch", "tz": "Europe/Vienna" },{ "key": "ron", "description": "Buddies home", "tz": "America/New_York" }]'
+$ export WHEN_CONFIG_LOCATIONS='[{ "key": "🏠", "description": "On my couch", "tz": "Europe/Vienna" },{ "key": "ron", "description": "Buddy's home", "tz": "America/New_York" }]'
 $ when-cli '17:00'
 ```
 <img src="https://raw.githubusercontent.com/chassing/when-cli/master/media/usage-example4.png" width="50%" />

@@ -28,19 +28,19 @@
 - **Fast:** it's fast! 🚀
 - **Easy:** quick to install – start using it in minutes.
 - **Customizable:** configure every aspect to your needs.
-
+- **Colorful:** beautiful colors and Emoji 😎 support.
 
 ## Installation
 
 You can install **when-cli** from [PyPI](https://pypi.org/project/when-cli/) with `pipx`):
 
 ```bash
-pipx install when-cli
+$ pipx install when-cli
 ```
 
 or install it with `pip`:
 ```bash
-python3 -m pip install when-cli
+$ python3 -m pip install when-cli
 ```
 
 You can also download and use the pre-build binary from the latest [Release](https://github.com/chassing/when-cli/releases).
@@ -49,7 +49,7 @@ You can also download and use the pre-build binary from the latest [Release](htt
 ## Usage
 
 ```bash
-when-cli "7. May 06:00 to May 7th 12:00 in PMI" -l America/Los_Angeles -l klu -l PMI
+$ when-cli "7. May 06:00 to May 7th 12:00 in PMI" -l America/Los_Angeles -l klu -l PMI
                                          Time table
 ╭───────────────────────────┬───────────────────────────┬───────────────────────────────────╮
 │                           │ Klagenfurt, Austria (klu) │Palma De Mallorca Airport, ES (PMI)│
