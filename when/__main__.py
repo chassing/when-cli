@@ -8,10 +8,11 @@ import rich.box
 import rich_click.rich_click
 import rich_click.typer as typer
 from rich import print
+from rich.markdown import Markdown
 from rich.style import Style
 from rich.table import Table
 from rich.text import Text
-from rich.markdown import Markdown
+
 from when import rich_typer
 from when.config import settings
 from when.when import when
@@ -124,15 +125,17 @@ def main(
         metavar="LOCATION_KEY",
         envvar="WHEN_LOCATIONS",
     ),
-    table_color: str = typer.Option("deep_sky_blue2", envvar="WHEN_TABLE_COLOR", metavar="COLOR", show_default=True),
-    table_padding: int = typer.Option(0, envvar="WHEN_TABLE_PADDING", metavar="INTEGER"),
-    header_color: str = typer.Option("green", envvar="WHEN_HEADER_COLOR", metavar="COLOR"),
-    date_format: str = typer.Option("%x", envvar="WHEN_DATE_FORMAT", metavar="FORMAT_DIRECTIVE"),
-    date_color: str = typer.Option("deep_pink4", envvar="WHEN_DATE_COLOR", metavar="COLOR"),
-    time_format: str = typer.Option("%H:%M", envvar="WHEN_TIME_FORMAT", metavar="FORMAT_DIRECTIVE"),
-    time_color: str = typer.Option("spring_green3", envvar="WHEN_TIME_COLOR", metavar="COLOR"),
-    tz_format: str = typer.Option("%Z", envvar="WHEN_TZ_FORMAT", metavar="FORMAT_DIRECTIVE"),
-    tz_color: str = typer.Option("grey27", envvar="WHEN_TZ_COLOR", metavar="COLOR"),
+    table_color: str = typer.Option(
+        "deep_sky_blue2", envvar="WHEN_TABLE_COLOR", metavar="COLOR", help="Table border color"
+    ),
+    row_padding: int = typer.Option(0, envvar="WHEN_ROW_PADDING", metavar="INTEGER", help="Row padding"),
+    header_color: str = typer.Option("green", envvar="WHEN_HEADER_COLOR", metavar="COLOR", help="Header font color"),
+    date_format: str = typer.Option("%x", envvar="WHEN_DATE_FORMAT", metavar="FORMAT_DIRECTIVE", help="Date format"),
+    date_color: str = typer.Option("deep_pink4", envvar="WHEN_DATE_COLOR", metavar="COLOR", help="Date font color"),
+    time_format: str = typer.Option("%H:%M", envvar="WHEN_TIME_FORMAT", metavar="FORMAT_DIRECTIVE", help="Time format"),
+    time_color: str = typer.Option("spring_green3", envvar="WHEN_TIME_COLOR", metavar="COLOR", help="Time font color"),
+    tz_format: str = typer.Option("%Z", envvar="WHEN_TZ_FORMAT", metavar="FORMAT_DIRECTIVE", help="Timezone format"),
+    tz_color: str = typer.Option("grey27", envvar="WHEN_TZ_COLOR", metavar="COLOR", help="Timezone font color"),
     info_columns: List[str] = typer.Option(
         [k for k, v in INFO_COLS],
         "--info-columns",
@@ -168,6 +171,10 @@ def main(
     $ when-cli --usage
 
     \b
+    [b white]Strftime[/]
+    Standard datetime format codes [link]https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes[/]
+
+    \b
     [#2020FF]C[/][#4520FF]o[/][#6A20FF]l[/][#8F20FF]o[/][#B420FF]r[/][#D920FF]s[/]
     See [link]https://rich.readthedocs.io/en/latest/appendix/colors.html[/] for all available color codes.
     """
@@ -178,7 +185,7 @@ def main(
         sys.exit(1)
 
     zones = sorted(r, key=lambda x: x.offset)
-    table = Table(title="Time table", style=table_color, box=rich.box.ROUNDED, padding=table_padding)
+    table = Table(title="Time table", style=table_color, box=rich.box.ROUNDED, padding=row_padding)
     for zone in zones:
         text = zone.description + (f" ({zone.name})" if zone.name else "")
         if text:

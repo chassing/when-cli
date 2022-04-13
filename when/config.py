@@ -7,7 +7,6 @@ from .model import Location
 
 
 class Settings(BaseSettings):
-    debug: bool = False
     default_tz: str = str(get_localzone())
     locations: List[Location] = [
         Location(key="klu", description="Klagenfurt, Austria", tz="Europe/Vienna"),
