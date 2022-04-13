@@ -11,7 +11,7 @@ from rich import print
 from rich.style import Style
 from rich.table import Table
 from rich.text import Text
-
+from rich.markdown import Markdown
 from when import rich_typer
 from when.config import settings
 from when.when import when
@@ -37,6 +37,69 @@ INFO_COLS = [
 
 VERSION = "2.0"
 
+SHORT_USAGE = """
+
+# Usage
+
+```
+$ when-cli [OPTIONS] TIME_STRING
+```
+
+# TIME_STRING Syntax
+
+[`DATE`] `TIME` [to [`TO_DATE`] `TO_TIME`] [in `TIMEZONE_OR_LOCATION`]
+
+* `DATE` is the start date. *[Default: **today**]*
+* `TIME` is the start time. **required**
+* `TO_DATE` is the end date. *[Default: **end date = start date**]*
+* `TO_TIME` is the end time. *[Default: **end time = start time**]*
+* `TIMEZONE_OR_LOCATION` interpret dates and times in this timezone. *[Default: **host timezone**]*
+
+## `DATE`
+
+* YYYY-MM-DD, YYYY.MM.DD (e.g. 2021-09-30) - English locale
+* DD.MM.YYYY (e.g. 30.09.1979) - German locale
+* Day Month [Year] (e.g. 30. September) - German locale
+* [Year] Month Day (e.g. September 30th) - English locale
+* Month can be an abbreviation too (e.g Sep vs September)
+* Day can be english or german local (e.g. 1st vs 1.)
+
+## `TIME`
+
+* HH:MM (e.g. 16:30) - 24 hours format
+* HH:MM am/pm (e.g. 2:30am) - 12 hours format
+
+## `TIMEZONE_OR_LOCATION`
+
+* City name
+    * Los Angeles (US)
+    * Erfurt (Germany)
+    * Torrance (US)
+* timezones
+    * Europe/Vienna
+    * UTC
+    * America/Los_Angeles
+* airport codes
+    * klu (Klagenfurt Airport)
+    * lax (Los Angeles International Airport)
+    * KJFK (John F Kennedy International Airport)
+* self defined locations via WHEN_CONFIG_LOCATIONS
+
+# Examples
+
+```shell
+$ when-cli "07.05.2022 06:15 in PMI" -l lax -l Berlin
+
+```
+
+```shell
+$ when-cli "30. September 17:00 to Oct 1st 2:3pm in LAX"
+```
+
+---
+Complete usage guide can be found at [https://github.com/chassing/when-cli/blob/master/USAGE.md](https://github.com/chassing/when-cli/blob/master/USAGE.md)
+"""
+
 
 def complete_info_columns(ctx: typer.Context, incomplete: str):
     for name, help_text in INFO_COLS:
@@ -47,6 +110,7 @@ def complete_info_columns(ctx: typer.Context, incomplete: str):
 def show_usage(value: bool):
     if not value:
         return
+    print(Markdown(SHORT_USAGE))
     sys.exit(0)
 
 
