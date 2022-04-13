@@ -50,20 +50,11 @@ You can also download and use the pre-build binary from the latest [Release](htt
 
 ```bash
 $ when-cli "7. May 06:00 to May 7th 12:00 in PMI" -l America/Los_Angeles -l klu -l PMI
-                                         Time table
-╭───────────────────────────┬───────────────────────────┬───────────────────────────────────╮
-│                           │ Klagenfurt, Austria (klu) │Palma De Mallorca Airport, ES (PMI)│
-│    America/Los_Angeles    │       Europe/Vienna       │           Europe/Madrid           │
-├───────────────────────────┼───────────────────────────┼───────────────────────────────────┤
-│06.05.2022 21:00 UTC-07:00 │07.05.2022 06:00 UTC+02:00 │07.05.2022 06:00 UTC+02:00         │
-│06.05.2022 22:00 UTC-07:00 │07.05.2022 07:00 UTC+02:00 │07.05.2022 07:00 UTC+02:00         │
-│06.05.2022 23:00 UTC-07:00 │07.05.2022 08:00 UTC+02:00 │07.05.2022 08:00 UTC+02:00         │
-│07.05.2022 00:00 UTC-07:00 │07.05.2022 09:00 UTC+02:00 │07.05.2022 09:00 UTC+02:00         │
-│07.05.2022 01:00 UTC-07:00 │07.05.2022 10:00 UTC+02:00 │07.05.2022 10:00 UTC+02:00         │
-│07.05.2022 02:00 UTC-07:00 │07.05.2022 11:00 UTC+02:00 │07.05.2022 11:00 UTC+02:00         │
-│07.05.2022 03:00 UTC-07:00 │07.05.2022 12:00 UTC+02:00 │07.05.2022 12:00 UTC+02:00         │
-╰───────────────────────────┴───────────────────────────┴───────────────────────────────────╯
 ```
+<img
+  src="https://raw.githubusercontent.com/chassing/when-cli/master/media/example.png"
+  alt="Example"
+/>
 
 See [Usage](https://github.com/chassing/when-cli/blob/master/USAGE.md) for more details.
 
