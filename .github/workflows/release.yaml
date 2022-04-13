@@ -20,6 +20,45 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           release-type: python
 
+  pypi_build:
+    name: Build PyPI packages
+    needs: release_please
+    if: ${{ needs.release_please.outputs.release_created }}
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install poetry
+        run: pipx install poetry
+
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.10"
+          cache: "poetry"
+
+      - name: Install dependencies
+        run: |
+          poetry env use "3.10"
+          poetry install --no-interaction --no-root
+
+      - name: Unittests
+        run: |
+          poetry run pytest tests
+
+      - name: Publish to PyPI
+        env:
+          POETRY_PYPI_TOKEN_PYPI: ${{ secrets.PYPI_TOKEN }}
+        run: |
+          poetry publish --build
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: pypi-packages
+          path: |
+            dist/*.whl
+            dist/*.tar.gz
+
   github_build:
     name: Build release binaries
     needs: release_please
