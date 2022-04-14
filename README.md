@@ -10,8 +10,9 @@
 [![PyPI version][pypi-version]][pypi-link]
 [![PyPI platforms][pypi-platforms]][pypi-link]
 [![Black][black-badge]][black-link]
-
-
+![PyPI - License](https://img.shields.io/pypi/l/when-cli)
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/chassing/when-cli/Test?label=tests)
+![GitHub Release Date](https://img.shields.io/github/release-date/chassing/when-cli)
 
 # When CLI
 
@@ -80,4 +81,3 @@ Please make sure to update tests as appropriate.
 [pypi-link]:                https://pypi.org/project/when-cli/
 [pypi-platforms]:           https://img.shields.io/pypi/pyversions/when-cli
 [pypi-version]:             https://badge.fury.io/py/when-cli.svg
-
