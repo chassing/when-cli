@@ -4,6 +4,13 @@
 
 [1]: https://pypi.org/project/when-cli/#history
 
+## [1.1.2](https://github.com/chassing/when-cli/compare/v1.1.1...v1.1.2) (2022-08-10)
+
+
+### Bug Fixes
+
+* pipx install issues ([af586bd](https://github.com/chassing/when-cli/commit/af586bd10534d8e129b71cf40b094ce1c11188f7))
+
 ### [1.1.1](https://github.com/chassing/when-cli/compare/v1.1.0...v1.1.1) (2022-04-13)
 
 
