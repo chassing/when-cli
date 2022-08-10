@@ -179,12 +179,12 @@ def main(
     See [link]https://rich.readthedocs.io/en/latest/appendix/colors.html[/] for all available color codes.
     """
     try:
-        r = when(time_string=time_string, location_keys=locations)
+        zones = when(time_string=time_string, location_keys=locations)
     except zoneinfo.ZoneInfoNotFoundError as e:
         print(f"[b red]Unknown timezone[/]: {e}")
         sys.exit(1)
 
-    zones = sorted(r, key=lambda x: x.offset)
+    zones = sorted(zones, key=lambda x: x.offset)
     table = Table(title="Time table", style=table_color, box=rich.box.ROUNDED, padding=row_padding)
     for zone in zones:
         text = zone.description + (f" ({zone.name})" if zone.name else "")
@@ -194,29 +194,31 @@ def main(
         table.add_column(Text(text, justify="center", style=header_color))
 
     p_times = None
-    for times in zip(*[zone.times for zone in zones]):
+    for _times in zip(*[zone.times for zone in zones]):
         row = []
-        times = [dt.fromisoformat(t) for t in times]
+        times = [dt.fromisoformat(t) for t in _times]
 
-        for i, t in enumerate(times):
-            r = Text()
+        for i, time in enumerate(times):
+            row_text = Text()
             date_col = Text(
-                t.strftime(date_format),
-                style=Style(color=date_color, bgcolor="yellow" if p_times and p_times[i].date() < t.date() else None),
+                time.strftime(date_format),
+                style=Style(
+                    color=date_color, bgcolor="yellow" if p_times and p_times[i].date() < time.date() else None
+                ),
             )
 
-            time_col = Text(t.strftime(time_format), style=time_color)
-            tz_col = Text(t.strftime(tz_format), style=tz_color)
+            time_col = Text(time.strftime(time_format), style=time_color)
+            tz_col = Text(time.strftime(tz_format), style=tz_color)
 
-            for i in info_columns:
-                if i == "date":
-                    r += date_col
-                if i == "time":
-                    r += time_col
-                if i == "tz":
-                    r += tz_col
-                r += " "
-            row.append(r)
+            for info_col in info_columns:
+                if info_col == "date":
+                    row_text += date_col
+                if info_col == "time":
+                    row_text += time_col
+                if info_col == "tz":
+                    row_text += tz_col
+                row_text += " "
+            row.append(row_text)
 
         p_times = times
         table.add_row(*row)
@@ -224,5 +226,9 @@ def main(
     print(table)
 
 
-if __name__ == "__main__":
+def run():
     typer.run(main)
+
+
+if __name__ == "__main__":
+    run()
